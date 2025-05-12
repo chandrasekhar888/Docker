@@ -9,7 +9,7 @@ public class Hello {
 
 	@GetMapping("/message")
 	public String getMessage() {
-		return "Hi cs";
+		return "The CI /CD is working ";
 	}
 
 }
