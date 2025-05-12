@@ -1,0 +1,37 @@
+pipeline {
+    agent any
+    
+    tools {
+        maven 'maven'  
+    }
+
+    stages {
+        stage('git clone') {
+            steps {
+                git branch: 'main', url: 'https://github.com/chandrasekhar888/Docker.git'
+            }
+        }
+        stage('mvn') {
+            steps {
+                sh 'mvn clean test package'
+            }
+        }
+        stage('build image') {
+            steps {
+                sh 'docker build -t itschandrasekhar/test .'
+            }
+        }
+        stage('deployment') {
+            steps {
+                script {
+                    // Stop and remove the existing container if it exists
+                    sh 'docker stop itschandrasekhar || true'  // Ignore errors if container is not running
+                    sh 'docker rm itschandrasekhar || true'    // Ignore errors if container does not exist
+
+                    // Run the new container
+                    sh 'docker run -d -p 8081:8080 --name itschandrasekhar itschandrasekhar/test'
+                }
+            }
+        }
+    }
+}
